@@ -7,6 +7,7 @@
 -- -- -- -- -- -- -- LSM tecnologias -- -- -- -- -- -- --
 
 -- Cena executada manualmente, liga a tv e ajusta o canal/volume de acordo com a hora
+-- Manual scene, turn on tv, adjust the channel and the volume depending of the hour
 
 function ligarTv(canal, volume)
 	local TvId = 38       -- virtual device 'Tv'
@@ -14,32 +15,32 @@ function ligarTv(canal, volume)
 	local TvInputNet = 4  -- virtual device 'Tv', button 'Input Cable Tv'
 	local TvVolUp = 8     -- virtual device 'Tv', button 'Volume Up'
 	local TvVolZero = 33  -- virtual device 'Tv', button 'Volume to zero' (press volume down 20 times)
-  local VivoId = 112    -- virtual device 'VivoTV' (cable TV)
+  	local VivoId = 112    -- virtual device 'VivoTV' (cable TV)
 	local botao = {40, 30, 31, 32, 33, 34, 35, 36, 37, 38} -- lista dos ID de botoes da 'VivoTV' em relação aos numeros 0,1,2,3..9
 	local nxCanal = tonumber(string.len(canal)) -- qtde de caracteres do canal (ex. canal 18 = 2 caracteres)
 	fibaro:call(TvId, 'pressButton', TvInputNet)
 	fibaro:sleep(750)
 	fibaro:call(TvId, 'pressButton', TvOn)
 	print ('TV ligada')
-    fibaro:sleep(1000)
+    	fibaro:sleep(1000)
 	for x=1, nxCanal, 1 do
 		local nCanal = string.sub(canal, x, x)
 		local nCanal = botao[(nCanal+1)]
 		fibaro:call(VivoId, 'pressButton', nCanal)
 		fibaro:sleep(750)
 	end
-  	print('NET canal '..canal)
+  	print('VivoTV canal '..canal)
   	fibaro:sleep(9000)
   	fibaro:call(TvId, 'pressButton', TvVolZero)
   	print('TV volume = 0')
 	fibaro:sleep(3500)
-    fibaro:call(TvId, 'pressButton', TvInputNet)
+    	fibaro:call(TvId, 'pressButton', TvInputNet)
 	print('TV input net')
 	fibaro:sleep(3500)
-    for x=1, volume, 1 do
-    	fibaro:call(TvId, 'pressButton', TvVolUp)
-      	fibaro:sleep(500)
-    end
+    	for x=1, volume, 1 do
+    		fibaro:call(TvId, 'pressButton', TvVolUp)
+      		fibaro:sleep(500)
+    	end
 	print('TV volume = '..volume)
 end
 
@@ -48,36 +49,31 @@ local currentDate = os.date('*t')
 local startSource = fibaro:getSourceTrigger()
 if startSource['type'] == 'other'
 then
-		print (os.date("%d/%m")..' - Cena iniciada Manualmente')
-    if string.format('%02d:%02d', currentDate.hour, currentDate.min) >= '00:00'
-		and string.format('%02d:%02d', currentDate.hour, currentDate.min) <= '05:59'
-		then
-			ligarTv(536, 5); --ch off 536, volume 6
-		end
-		if string.format('%02d:%02d', currentDate.hour, currentDate.min) >= '06:00'
-		and string.format('%02d:%02d', currentDate.hour, currentDate.min) <= '08:50'
+	print (os.date('%d/%m')..' - Cena iniciada Manualmente')
+    	if string.format('%02d:%02d', currentDate.hour, currentDate.min) >= '00:00'
+	and string.format('%02d:%02d', currentDate.hour, currentDate.min) <= '05:59'
+	then
+		ligarTv(536, 5); --ch 536, volume 6
+	elseif string.format('%02d:%02d', currentDate.hour, currentDate.min) >= '06:00'
+	and string.format('%02d:%02d', currentDate.hour, currentDate.min) <= '08:50'
     	then
-			ligarTv(515, 8); --ch 515, volume 8
-		end
-		if string.format('%02d:%02d', currentDate.hour, currentDate.min) >= '08:51'
-		and string.format('%02d:%02d', currentDate.hour, currentDate.min) <= '11:30'
-      	then
-			ligarTv(513, 9);
-		end
-    if string.format('%02d:%02d', currentDate.hour, currentDate.min) >= '11:31'
-		and string.format('%02d:%02d', currentDate.hour, currentDate.min) <= '17:30'
-      	then
-			ligarTv(515, 8);
-		end
-    if string.format('%02d:%02d', currentDate.hour, currentDate.min) >= '17:31'
-		and string.format('%02d:%02d', currentDate.hour, currentDate.min) <= '20:30'
-		then
-			ligarTv(536, 8);
-		end
-    if string.format('%02d:%02d', currentDate.hour, currentDate.min) >= '20:31'
-		and string.format('%02d:%02d', currentDate.hour, currentDate.min) <= '23:59'
-		then
-			ligarTv(515, 8);
-		end
-    print("FIM");
+		ligarTv(515, 8); --ch 515, volume 8
+	elseif string.format('%02d:%02d', currentDate.hour, currentDate.min) >= '08:51'
+	and string.format('%02d:%02d', currentDate.hour, currentDate.min) <= '11:30'
+    	then
+		ligarTv(513, 9);
+	elseif string.format('%02d:%02d', currentDate.hour, currentDate.min) >= '11:31'
+	and string.format('%02d:%02d', currentDate.hour, currentDate.min) <= '17:30'
+    	then
+		ligarTv(515, 8);
+	elseif string.format('%02d:%02d', currentDate.hour, currentDate.min) >= '17:31'
+	and string.format('%02d:%02d', currentDate.hour, currentDate.min) <= '20:30'
+	then
+		ligarTv(536, 8);
+	elseif string.format('%02d:%02d', currentDate.hour, currentDate.min) >= '20:31'
+	and string.format('%02d:%02d', currentDate.hour, currentDate.min) <= '23:59'
+	then
+		ligarTv(515, 8);
+	end
+    print('FIM');
 end
